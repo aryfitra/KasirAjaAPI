@@ -1,0 +1,594 @@
+{
+	"info": {
+		"_postman_id": "f08d9ac4-0521-4284-a504-0e2d55420c6e",
+		"name": "KasirAja",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19448782",
+		"_collection_link": "https://grey-shuttle-767860.postman.co/workspace/sanbercode~470e4dcb-93bf-4b87-b330-0d3e9194022f/collection/19448782-f08d9ac4-0521-4284-a504-0e2d55420c6e?action=share&creator=19448782&source=collection_link"
+	},
+	"item": [
+		{
+			"name": "Authorization",
+			"item": [
+				{
+					"name": "Registration",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseJSON = pm.response.json();\r",
+									"pm.environment.set(\"email\", responseJSON.data.email);\r",
+									"\r",
+									"pm.test(\"Success Regist\", function(){\r",
+									"    pm.response.to.have.status(201);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\" : \"harry\",\r\n    \"email\" : \"harry@gmail.com\",\r\n    \"password\" : \"Password123!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseurl}}/registration",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"registration"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseJSON = pm.response.json();\r",
+									"pm.test(\"Success Login\", function(){\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Assertion data user\", function(){\r",
+									"    pm.expect(responseJSON.data.user.email).to.eql(pm.environment.get(\"email\"));\r",
+									"    pm.expect(responseJSON.data.user.name).to.eql(\"harry\");\r",
+									"});\r",
+									"\r",
+									"pm.environment.set(\"accessToken\", responseJSON.data.accessToken);\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\" : \"{{email}}\",\r\n    \"password\" : \"Password123!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseurl}}/authentications",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"authentications"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Failed Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseJSON = pm.response.json();\r",
+									"pm.test(\"Failed Login\", function(){\r",
+									"    pm.response.to.have.status(401);\r",
+									"    pm.expect(responseJSON.status).to.eql(\"fail\");\r",
+									"    pm.expect(responseJSON.message).to.eql(\"Kredensial yang Anda berikan salah\");\r",
+									"\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\" : \"{{email}}\",\r\n    \"password\" : \"Password123!x\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseurl}}/authentications",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"authentications"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Unit",
+			"item": [
+				{
+					"name": "Add Unit",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseJSON = pm.response.json();\r",
+									"var requestBODY = JSON.parse(request.data);\r",
+									"\r",
+									"pm.environment.set(\"unitID\", responseJSON.data.unitId);\r",
+									"pm.environment.set(\"unitname\", responseJSON.data.name);\r",
+									"pm.environment.set(\"unitdescription\", requestBODY.description);\r",
+									"\r",
+									"pm.test(\"check response status message\", function(){\r",
+									"    pm.response.to.have.status(201);\r",
+									"    pm.expect(responseJSON.status).to.eql(\"success\");\r",
+									"    pm.expect(responseJSON.message).to.eql(\"Unit berhasil ditambahkan\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"name\": \"gram\",\r\n   \"description\" : \"weight measurement\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseurl}}/units",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"units"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Unit Detail",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseJSON = pm.response.json();\r",
+									"\r",
+									"pm.response.to.have.status(200);\r",
+									"pm.test(\"Assertion name & description\", function(){\r",
+									"    pm.expect(responseJSON.data.unit.name).to.eql(pm.environment.get(\"unitname\"));\r",
+									"    pm.expect(responseJSON.data.unit.description).to.eql(pm.environment.get(\"unitdescription\"));\r",
+									"})\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseurl}}/units/{{unitID}}",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"units",
+								"{{unitID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Unit",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseJSON = pm.response.json();\r",
+									"\r",
+									"pm.response.to.have.status(200);\r",
+									"pm.test(\"Unit name updated\", function(){\r",
+									"    pm.expect(responseJSON.data.name).to.not.eql(pm.environment.get(\"unitname\"));\r",
+									"    pm.expect(responseJSON.data.name).to.eql(\"update-meter\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"name\": \"update-meter\",\r\n   \"description\": \"no-meter\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseurl}}/units/{{unitID}}",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"units",
+								"{{unitID}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Categories",
+			"item": [
+				{
+					"name": "Add Category",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseJSON = pm.response.json();\r",
+									"var requestBODY = JSON.parse(request.data)\r",
+									"\r",
+									"pm.test(\"success add category\", function(){\r",
+									"    pm.expect(responseJSON.data.name).to.have.eql(requestBODY.name)\r",
+									"})\r",
+									"pm.response.to.have.status(201);\r",
+									"pm.environment.set(\"categoryID\", responseJSON.data.categoryId);\r",
+									"\r",
+									"console.log(requestBODY)"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"name\": \"makanan ringan\",\r\n   \"description\": \"makanan ringan dari indofood\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseurl}}/categories",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"categories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Category Detail",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseJSON = pm.response.json();\r",
+									"\r",
+									"pm.test(\"assert name & description category\", function(){\r",
+									"    var expectedJSON = {\r",
+									"        \"name\" : \"makanan ringan\", \r",
+									"        \"description\" : \"makanan ringan dari indofood\"\r",
+									"    }\r",
+									"    pm.expect(responseJSON.data.category).to.include(expectedJSON);\r",
+									"});\r",
+									"\r",
+									"console.log(responseJSON)"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseurl}}/categories/{{categoryID}}",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"categories",
+								"{{categoryID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Category List",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseJSON = pm.response.json()\r",
+									"\r",
+									"pm.test(\"berhasil get list\", function(){\r",
+									"    pm.response.to.have.status(200);\r",
+									"})\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseurl}}/categories",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"categories"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Customers",
+			"item": [
+				{
+					"name": "Add Customer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseJSON = pm.response.json();\r",
+									"\r",
+									"pm.test(\"success add new customer\", function(){\r",
+									"    pm.response.to.have.status(201);\r",
+									"    pm.expect(responseJSON.data.name).to.have.eql(\"Harry\");\r",
+									"});\r",
+									"\r",
+									"pm.environment.set(\"customerID\", responseJSON.data.customerId)"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"name\": \"Harry\",\r\n   \"phone\": \"081234567890\",\r\n   \"address\": \"Bandoeng\",\r\n   \"description\": \"Harry ganteng\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseurl}}/customers",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"customers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Customer Detail",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseJSON = pm.response.json()\r",
+									"\r",
+									"pm.test(\"Data sesuai\", function(){\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var expectedJSON = {\r",
+									"        \"name\": \"Harry\",\r",
+									"        \"phone\": \"081234567890\",\r",
+									"        \"address\": \"Bandoeng\",\r",
+									"        \"description\": \"Harry ganteng\"\r",
+									"    };\r",
+									"    pm.expect(responseJSON.data.customer).to.eql(expectedJSON);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseurl}}/customers/{{customerID}}",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"customers",
+								"{{customerID}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
